@@ -1,0 +1,19 @@
+[package]
+name = "Retail-Pulse"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+argon2 = "0.5.3"
+axum = "0.7.7"
+dotenvy = "0.15.7"
+jsonwebtoken = "9.3.0"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
+sqlx = { version = "0.8.2", features = ["macros", "postgres", "runtime-tokio", "chrono"], default-features = false }
+thiserror = "1.0.64"
+tokio = { version = "1.40.0", default-features = false, features = ["macros", "rt-multi-thread"] }
+
+[dependencies.chrono]
+version = "0.4.38"
+features = ["serde"]
