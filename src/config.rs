@@ -23,12 +23,12 @@ impl AppConfig {
 
         dotenv().ok();
 
-        let db_url = env::var("DB_URL").expect("DB_URL must be set");
-        let db_max_connections = env::var("DB_MAX_CONNECTIONS")
+        let db_url = env::var("DATABASE_URL").expect("DB_URL must be set");
+        let db_max_connections = env::var("DATABASE_MAX_CONNECTIONS")
             .expect("DB_MAX_CONNECTIONS must be set")
             .parse::<u32>()
             .expect("DB_MAX_CONNECTIONS must be a number");
-        let db_connection_timeout = env::var("DB_CONNECTION_TIMEOUT")
+        let db_connection_timeout = env::var("DATABASE_CONNECTION_TIMEOUT")
             .expect("DB_CONNECTION_TIMEOUT must be set")
             .parse::<u64>()
             .expect("DB_CONNECTION_TIMEOUT must be a number");

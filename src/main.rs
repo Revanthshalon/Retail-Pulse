@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use tokio::net::TcpListener;
-
 use repositories::RepositoryContainer;
 use routes::create_api_routes;
 use services::ServiceContainer;
+use tokio::net::TcpListener;
+use tracing::info;
 
 use crate::config::AppConfig;
 use crate::db::DbService;
@@ -21,6 +21,8 @@ mod services;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tracing_subscriber::fmt().pretty().json().init();
+
     let app_config = AppConfig::from_env();
     let db_service = DbService::new(&app_config).await;
 
@@ -30,9 +32,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app_state = AppState::new(service_container);
 
     let app_routes = create_api_routes(app_state);
-    let listener = TcpListener::bind("localhost:3000")
+    let listener = TcpListener::bind("localhost:8080")
         .await
-        .expect("Failed to bind port 3000");
+        .expect("Failed to bind port 8080");
+
+    info!("Server is running on port 8080");
 
     axum::serve(listener, app_routes.into_make_service())
         .await

@@ -24,6 +24,13 @@ impl CreateTenantDTO {
         if self.email.trim().is_empty() {
             return Err(AppErrors::ValidationError("Email is required".to_string()));
         }
+        if !self.email.trim().contains("@")
+            || !self.email.trim().contains(".")
+            || !self.email.split("@").count() == 2
+        {
+            return Err(AppErrors::ValidationError("Email is invalid".to_string()));
+        }
+
         if self.password.trim().is_empty() {
             return Err(AppErrors::ValidationError(
                 "Password is required".to_string(),
@@ -106,9 +113,9 @@ impl UpdateTenantDTO {
                     "Contact is required".to_string(),
                 ));
             }
-            if contact.len() < 10 {
+            if contact.len() != 10 {
                 return Err(AppErrors::ValidationError(
-                    "Contact must be at least 8 characters".to_string(),
+                    "Contact must be 10 digits".to_string(),
                 ));
             }
 

@@ -5,6 +5,7 @@ use axum::{
 };
 use serde_json::json;
 use thiserror::Error;
+use tracing::error;
 
 #[derive(Debug, Error)]
 pub enum AppErrors {
@@ -12,6 +13,10 @@ pub enum AppErrors {
     ValidationError(String),
     #[error("Database Error: {0}")]
     DatabaseError(#[from] sqlx::Error),
+    #[error("Conflict: {0}")]
+    Conflict(String),
+    #[error("Not Found: {0}")]
+    NotFound(String),
 }
 
 impl IntoResponse for AppErrors {
@@ -24,11 +29,25 @@ impl IntoResponse for AppErrors {
                 }));
                 (status, response).into_response()
             }
-            AppErrors::DatabaseError(_e) => {
-                // TODO: Log the error
+            AppErrors::DatabaseError(e) => {
+                error!("Database Error: {:?}", e);
                 let status = StatusCode::INTERNAL_SERVER_ERROR;
                 let response = Json(json!({
                     "error": "Internal Server Error",
+                }));
+                (status, response).into_response()
+            }
+            AppErrors::Conflict(message) => {
+                let status = StatusCode::CONFLICT;
+                let response = Json(json!({
+                    "error": message,
+                }));
+                (status, response).into_response()
+            }
+            AppErrors::NotFound(message) => {
+                let status = StatusCode::NOT_FOUND;
+                let response = Json(json!({
+                    "error": message,
                 }));
                 (status, response).into_response()
             }
