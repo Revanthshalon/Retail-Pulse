@@ -1,1 +1,11 @@
--- Add up migration script here
+CREATE TABLE tenants (
+    id SERIAL PRIMARY KEY NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NULL,
+    last_name VARCHAR(255) NULL,
+    country_code VARCHAR(2) NULL,
+    contact VARCHAR(10) NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ NULL
+)
