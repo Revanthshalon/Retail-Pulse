@@ -3,6 +3,7 @@ use crate::db::DbService;
 
 mod config;
 mod db;
+mod entities;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -26,7 +26,7 @@ impl DbService {
         let pool = PgPoolOptions::new()
             .max_connections(app_config.db_max_connections())
             .idle_timeout(Duration::from_secs(app_config.db_connection_timeout()))
-            .connect(&app_config.db_url())
+            .connect(app_config.db_url())
             .await
             .expect("Failed to create connection pool");
 
