@@ -9,9 +9,7 @@ pub struct AuthRepo {
 
 impl AuthRepo {
     pub fn new(pool: PgPool) -> Self {
-        Self {
-            pool
-        }
+        Self { pool }
     }
 }
 

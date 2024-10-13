@@ -14,12 +14,11 @@ pub enum AppErrors {
     #[error("Database Error: {0}")]
     DatabaseError(#[from] sqlx::Error),
     #[error("Hashing Error: {0}")]
-    HashingError(#[from] argon2::password_hash::Error),
+    HashingError(String),
     #[error("Conflict: {0}")]
     Conflict(String),
     #[error("Not Found: {0}")]
     NotFound(String),
-
 }
 
 impl IntoResponse for AppErrors {

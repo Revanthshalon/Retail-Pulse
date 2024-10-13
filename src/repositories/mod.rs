@@ -1,16 +1,17 @@
+use std::sync::Arc;
 use tenant::{TenantRepository, TenantRepositoryTrait};
 
-pub mod tenant;
 mod auth;
+pub mod tenant;
 
 pub struct RepositoryContainer {
-    pub tenant: Box<dyn TenantRepositoryTrait>,
+    pub tenant: Arc<dyn TenantRepositoryTrait>,
 }
 
 impl RepositoryContainer {
     pub fn new(pool: sqlx::PgPool) -> Self {
         Self {
-            tenant: Box::new(TenantRepository::new(pool.clone())),
+            tenant: Arc::new(TenantRepository::new(pool.clone())),
         }
     }
 }

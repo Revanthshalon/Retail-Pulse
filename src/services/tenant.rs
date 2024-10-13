@@ -4,13 +4,14 @@ use crate::{
     models::tenant::{CreateTenantDTO, UpdateTenantDTO},
     repositories::tenant::TenantRepositoryTrait,
 };
+use std::sync::Arc;
 
 pub struct TenantService {
-    repo: Box<dyn TenantRepositoryTrait>,
+    repo: Arc<dyn TenantRepositoryTrait>,
 }
 
 impl TenantService {
-    pub fn new(repo: Box<dyn TenantRepositoryTrait>) -> Self {
+    pub fn new(repo: Arc<dyn TenantRepositoryTrait>) -> Self {
         Self { repo }
     }
 }

@@ -1,14 +1,18 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
-pub struct CreateUserDTO {
+pub struct AuthRegisterDTO {
     pub email: String,
     pub password: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct LoginUserDTO {
+pub struct AuthLoginDTO {
     pub email: String,
     pub password: String,
 }
 
+#[derive(Debug, Serialize)]
+pub struct AuthResponseDTO {
+    pub token: String,
+}
