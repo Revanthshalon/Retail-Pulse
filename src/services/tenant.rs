@@ -1,7 +1,5 @@
 use crate::{
-    entities::tenant::Tenant,
-    errors::AppErrors,
-    models::tenant::{CreateTenantDTO, UpdateTenantDTO},
+    entities::tenant::Tenant, errors::AppErrors, models::tenant::UpdateTenantDTO,
     repositories::tenant::TenantRepositoryTrait,
 };
 use std::sync::Arc;
@@ -17,8 +15,12 @@ impl TenantService {
 }
 
 impl TenantService {
-    pub async fn create_tenant(&self, payload: CreateTenantDTO) -> Result<Tenant, AppErrors> {
-        self.repo.create_tenant(payload).await
+    pub async fn create_tenant(
+        &self,
+        email: String,
+        password: String,
+    ) -> Result<Tenant, AppErrors> {
+        self.repo.create_tenant(email, password).await
     }
     pub async fn get_tenant_by_id(&self, id: i32) -> Result<Tenant, AppErrors> {
         self.repo.get_tenant_by_id(id).await

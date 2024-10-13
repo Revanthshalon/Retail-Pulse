@@ -1,11 +1,7 @@
 use axum::async_trait;
 use sqlx::PgPool;
 
-use crate::{
-    entities::tenant::Tenant,
-    errors::AppErrors,
-    models::tenant::{CreateTenantDTO, UpdateTenantDTO},
-};
+use crate::{entities::tenant::Tenant, errors::AppErrors, models::tenant::UpdateTenantDTO};
 
 #[derive(Clone)]
 pub struct TenantRepository {
@@ -35,8 +31,9 @@ impl TenantRepository {
 
 #[async_trait]
 pub trait TenantRepositoryTrait: Send + Sync {
-    async fn create_tenant(&self, payload: CreateTenantDTO) -> Result<Tenant, AppErrors>;
+    async fn create_tenant(&self, email: String, password: String) -> Result<Tenant, AppErrors>;
     async fn get_tenant_by_id(&self, id: i32) -> Result<Tenant, AppErrors>;
+    async fn get_tenant_by_email(&self, email: &str) -> Result<Tenant, AppErrors>;
     async fn get_all_tenants(&self) -> Result<Vec<Tenant>, AppErrors>;
     async fn update_tenant(&self, id: i32, payload: UpdateTenantDTO) -> Result<Tenant, AppErrors>;
     async fn delete_tenant(&self, id: i32) -> Result<bool, AppErrors>;
@@ -44,8 +41,8 @@ pub trait TenantRepositoryTrait: Send + Sync {
 
 #[async_trait]
 impl TenantRepositoryTrait for TenantRepository {
-    async fn create_tenant(&self, payload: CreateTenantDTO) -> Result<Tenant, AppErrors> {
-        if self.check_if_tenant_email_exists(&payload.email).await? {
+    async fn create_tenant(&self, email: String, password: String) -> Result<Tenant, AppErrors> {
+        if self.check_if_tenant_email_exists(email.as_ref()).await? {
             return Err(AppErrors::Conflict("Email already exists".to_string()));
         }
 
@@ -56,17 +53,28 @@ impl TenantRepositoryTrait for TenantRepository {
             VALUES ($1, $2)
             RETURNING *
             "#,
-            payload.email,
-            payload.password,
+            email,
+            password,
         )
-        .fetch_one(&self.pool)
-        .await?;
+            .fetch_one(&self.pool)
+            .await?;
 
         Ok(result)
     }
 
     async fn get_tenant_by_id(&self, id: i32) -> Result<Tenant, AppErrors> {
         let tenant_option = sqlx::query_as!(Tenant, r#"SELECT * FROM tenants WHERE id = $1"#, id)
+            .fetch_optional(&self.pool)
+            .await?;
+
+        match tenant_option {
+            Some(tenant) => Ok(tenant),
+            None => Err(AppErrors::NotFound("Tenant not found".to_string())),
+        }
+    }
+
+    async fn get_tenant_by_email(&self, email: &str) -> Result<Tenant, AppErrors> {
+        let tenant_option = sqlx::query_as!(Tenant, r#"SELECT * FROM tenants WHERE email = $1"#, email)
             .fetch_optional(&self.pool)
             .await?;
 
@@ -107,8 +115,8 @@ impl TenantRepositoryTrait for TenantRepository {
             payload.contact,
             id,
         )
-        .fetch_one(&self.pool)
-        .await?;
+            .fetch_one(&self.pool)
+            .await?;
 
         Ok(result)
     }
