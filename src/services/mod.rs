@@ -3,6 +3,7 @@ use tenant::TenantService;
 use crate::repositories::RepositoryContainer;
 
 mod tenant;
+mod auth;
 
 pub struct ServiceContainer {
     pub tenant_service: TenantService,

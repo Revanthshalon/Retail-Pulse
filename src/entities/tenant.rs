@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub struct Tenant {
     pub id: i32,
     pub email: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub first_name: Option<String>,
     pub last_name: Option<String>,

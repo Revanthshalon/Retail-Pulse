@@ -13,10 +13,13 @@ pub enum AppErrors {
     ValidationError(String),
     #[error("Database Error: {0}")]
     DatabaseError(#[from] sqlx::Error),
+    #[error("Hashing Error: {0}")]
+    HashingError(#[from] argon2::password_hash::Error),
     #[error("Conflict: {0}")]
     Conflict(String),
     #[error("Not Found: {0}")]
     NotFound(String),
+
 }
 
 impl IntoResponse for AppErrors {
@@ -31,6 +34,14 @@ impl IntoResponse for AppErrors {
             }
             AppErrors::DatabaseError(e) => {
                 error!("Database Error: {:?}", e);
+                let status = StatusCode::INTERNAL_SERVER_ERROR;
+                let response = Json(json!({
+                    "error": "Internal Server Error",
+                }));
+                (status, response).into_response()
+            }
+            AppErrors::HashingError(e) => {
+                error!("Hashing Error: {:?}", e);
                 let status = StatusCode::INTERNAL_SERVER_ERROR;
                 let response = Json(json!({
                     "error": "Internal Server Error",

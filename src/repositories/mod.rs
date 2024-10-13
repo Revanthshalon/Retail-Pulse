@@ -1,6 +1,7 @@
 use tenant::{TenantRepository, TenantRepositoryTrait};
 
 pub mod tenant;
+mod auth;
 
 pub struct RepositoryContainer {
     pub tenant: Box<dyn TenantRepositoryTrait>,
