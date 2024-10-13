@@ -1,7 +1,6 @@
 use std::sync::Arc;
 use tenant::{TenantRepository, TenantRepositoryTrait};
 
-mod auth;
 pub mod tenant;
 
 pub struct RepositoryContainer {

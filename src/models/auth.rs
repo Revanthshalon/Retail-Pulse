@@ -18,6 +18,13 @@ pub struct AuthResponseDTO {
     pub token: String,
 }
 
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Claims {
+    pub sub: i32,
+    pub exp: i64,
+    pub iat: i64,
+}
+
 // ================================================
 // ================== VALIDATION ==================
 // ================================================

@@ -1,5 +1,6 @@
+use crate::entities::tenant::Tenant;
 use crate::errors::AppErrors;
-use crate::models::auth::{AuthLoginDTO, AuthRegisterDTO, AuthResponseDTO};
+use crate::models::auth::{AuthLoginDTO, AuthRegisterDTO};
 use crate::repositories::tenant::TenantRepositoryTrait;
 use crate::utils::{generate_password_hash, verify_password_hash};
 use std::sync::Arc;
@@ -15,21 +16,25 @@ impl AuthService {
 }
 
 impl AuthService {
-    pub async fn register(&self, payload: AuthRegisterDTO) -> Result<AuthResponseDTO, AppErrors> {
+    pub async fn register(&self, payload: AuthRegisterDTO) -> Result<Tenant, AppErrors> {
         payload.validate()?;
         let password_hash = generate_password_hash(&payload.password)?;
-        let _user = self
+        let user = self
             .repo
             .create_tenant(payload.email, password_hash)
             .await?;
-        todo!()
+        Ok(user)
     }
 
-    pub async fn login(&self, payload: AuthLoginDTO) -> Result<AuthResponseDTO, AppErrors> {
+    pub async fn login(&self, payload: AuthLoginDTO) -> Result<Tenant, AppErrors> {
         // Implement the login logic here
-        let user = self.repo.get_tenant_by_email(payload.email.as_ref())?;
-        verify_password_hash(user.password.as_ref(), payload.password.as_ref())?;
-        
-        todo!()
+        let user = self
+            .repo
+            .get_tenant_by_email(payload.email.as_ref())
+            .await?;
+        if !verify_password_hash(user.password.as_ref(), payload.password.as_ref())? {
+            return Err(AppErrors::Unauthorized);
+        }
+        Ok(user)
     }
 }

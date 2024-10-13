@@ -14,6 +14,7 @@ mod db;
 mod entities;
 mod errors;
 mod handlers;
+mod middlewares;
 mod models;
 mod repositories;
 mod routes;
@@ -30,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let repository_container = RepositoryContainer::new(db_service.pool());
     let service_container = ServiceContainer::new(repository_container);
 
-    let app_state = AppState::new(service_container);
+    let app_state = AppState::new(service_container, app_config);
 
     let app_routes = create_api_routes(app_state);
     let listener = TcpListener::bind("localhost:8080")
@@ -47,12 +48,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[derive(Clone)]
 pub struct AppState {
     pub service: Arc<ServiceContainer>,
+    pub config: Arc<AppConfig>,
 }
 
 impl AppState {
-    pub fn new(service: ServiceContainer) -> Self {
+    pub fn new(service: ServiceContainer, app_config: AppConfig) -> Self {
         Self {
             service: Arc::new(service),
+            config: Arc::new(app_config),
         }
     }
 }

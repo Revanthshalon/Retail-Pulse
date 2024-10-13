@@ -56,8 +56,8 @@ impl TenantRepositoryTrait for TenantRepository {
             email,
             password,
         )
-            .fetch_one(&self.pool)
-            .await?;
+        .fetch_one(&self.pool)
+        .await?;
 
         Ok(result)
     }
@@ -74,9 +74,10 @@ impl TenantRepositoryTrait for TenantRepository {
     }
 
     async fn get_tenant_by_email(&self, email: &str) -> Result<Tenant, AppErrors> {
-        let tenant_option = sqlx::query_as!(Tenant, r#"SELECT * FROM tenants WHERE email = $1"#, email)
-            .fetch_optional(&self.pool)
-            .await?;
+        let tenant_option =
+            sqlx::query_as!(Tenant, r#"SELECT * FROM tenants WHERE email = $1"#, email)
+                .fetch_optional(&self.pool)
+                .await?;
 
         match tenant_option {
             Some(tenant) => Ok(tenant),
@@ -115,8 +116,8 @@ impl TenantRepositoryTrait for TenantRepository {
             payload.contact,
             id,
         )
-            .fetch_one(&self.pool)
-            .await?;
+        .fetch_one(&self.pool)
+        .await?;
 
         Ok(result)
     }

@@ -19,6 +19,10 @@ pub enum AppErrors {
     Conflict(String),
     #[error("Not Found: {0}")]
     NotFound(String),
+    #[error("Internal Server Error: {0}")]
+    InternalServerError(String),
+    #[error("Unauthorized")]
+    Unauthorized,
 }
 
 impl IntoResponse for AppErrors {
@@ -58,6 +62,21 @@ impl IntoResponse for AppErrors {
                 let status = StatusCode::NOT_FOUND;
                 let response = Json(json!({
                     "error": message,
+                }));
+                (status, response).into_response()
+            }
+            AppErrors::InternalServerError(message) => {
+                error!("Internal Server Error: {:?}", message);
+                let status = StatusCode::INTERNAL_SERVER_ERROR;
+                let response = Json(json!({
+                    "error": "Internal Server Error",
+                }));
+                (status, response).into_response()
+            }
+            AppErrors::Unauthorized => {
+                let status = StatusCode::UNAUTHORIZED;
+                let response = Json(json!({
+                    "error": "Unauthorized",
                 }));
                 (status, response).into_response()
             }

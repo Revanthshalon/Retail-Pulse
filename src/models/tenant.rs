@@ -3,12 +3,6 @@ use serde::Deserialize;
 use crate::errors::AppErrors;
 
 #[derive(Debug, Deserialize)]
-pub struct CreateTenantDTO {
-    pub email: String,
-    pub password: String,
-}
-
-#[derive(Debug, Deserialize)]
 pub struct UpdateTenantDTO {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
